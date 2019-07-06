@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="./pubu.css">
+</head>
+<body>
+    <div class="wrapper">
+        <ul class="main">
+          <li><img src="0.png" alt=""><p>我是tlite</p></li>
+        </ul>
+        <ul class="main">
+            <li><img src="1.png" alt=""><p>我是tlite</p></li>
+        </ul>
+        <ul class="main">
+            <li><img src="2.png" alt=""><p>我是tlite</p></li>
+        </ul>
+        <ul class="main">
+            <li><img src="3.png" alt=""><p>我是tlite</p></li>
+        </ul>
+        <div class="loading">loading......</div>
+    </div>
+<script>
+    function getScrollOffset () {
+        if (window.pageXOffset) {
+            return {
+                x: window.pageXOffset,
+                y: window.pageYOffset
+            }
+        } else {
+            return {
+                x: document.documentElement.scrollLeft + document.body.scrollLeft,
+                y: document.documentElement.scrollTop + document.body.scrollTop
+            }
+        }
+    }
+
+    function getViewportOffset () {
+        if (window.innerWidth) {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            }
+        }
+        if (window.compatMode == 'CSS1Compat') {
+            return {
+                width: document.documentElement.clientWidth,
+                height: document.documentElement.clientHight
+            }
+        } else if (window.compatMode == 'BackCompat') {
+            return {
+                width: document.body.clientWidth,
+                height: document.body.clientHight
+            }
+        }
+    }
+
+
+
+    (function () {
+        var oUl = document.getElementsByTagName('ul');
+        var loading = document.getElementsByClassName('loading')[0];
+        var lock = true;
+        function creDom (arr, fn) {
+        arr.forEach(function (ele, i) {
+            var oLi = document.createElement('li');
+            var oImg = document.createElement('img');
+            var title = document.createElement('p');
+            var tempImg = document.createElement('img');
+            title.innerText = ele.title;
+            oImg.src = './timg.gif';
+            tempImg.src = ele.src;
+            oLi.appendChild(oImg);
+            oLi.appendChild(title);
+            var index = obtainMin('min');
+            oUl[index].appendChild(oLi);
+            tempImg.onload = function () {
+                setTimeout(function () {
+                    oImg.src = tempImg.src;
+                    obtainMin()
+                }, Math.random()*2000);
+            }
+        });
+        fn();
+    }
+     function obtainMin (type) {
+        var len = oUl.length;
+        var hArr = [];
+        for (var i = 0; i < len; i++) {
+            hArr[i] = oUl[i].offsetHeight;
+        }
+        if (type === 'min') {
+            var min = Math.min.apply(null, hArr);
+            var index = hArr.indexOf(min);
+            return index;
+        }
+        var max = Math.max.apply(null, hArr);
+        window.onscroll = null;
+        scorllEvent(max);
+    }
+    function init () {
+        if (lock) {
+            loading.style.display = 'block';
+            lock = false;
+            creDom([{src: './0.png', title: '我是tlite'}, {src: './3.png', title: '我是tlite'}, {src: './2.png', title: '我是tlite'}, {src: './1.png', title: '我是tlite'}, {src: './0.png', title: '我是tlite'}, {src: './3.png', title: '我是tlite'}, {src: './2.png', title: '我是tlite'}, {src: './1.png', title: '我是tlite'}], function () {
+                    console.log(222);
+                    lock = true;
+                    loading.style.display = 'none';
+            });
+        }
+    }
+   function scorllEvent (max) {
+        window.onscroll = function () {
+            var scrH = getScrollOffset().y + getViewportOffset().height;
+            var maxH = max;
+            if (maxH <= scrH) {
+                init();
+            }
+        }
+    }
+    init();
+    })();
+</script>
+</body>
+</html>
